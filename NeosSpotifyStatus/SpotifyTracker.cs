@@ -122,7 +122,7 @@ namespace NeosSpotifyStatus
             }
             catch (HttpRequestException)
             {
-                Task.Run(async () =>
+                await Task.Run(async () =>
                 {
                     await Task.Delay(60000);
                     handleAuthorization();
