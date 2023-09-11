@@ -19,7 +19,7 @@ namespace NeosSpotifyStatus
         {
             authorizationReceived.Reset();
 
-            server = new EmbedIOAuthServer(new Uri("http://localhost:5000/callback"), 5000);
+            server = new EmbedIOAuthServer(new Uri("http://localhost:" + Config.CallbackPort + "/callback"), Config.CallbackPort);
             await server.Start();
 
             server.AuthorizationCodeReceived += OnAuthorizationCodeReceived;

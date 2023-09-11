@@ -82,7 +82,8 @@ namespace NeosSpotifyStatus
 
             var tokenResponse = await oAuthClient.RequestToken(
               new AuthorizationCodeTokenRequest(
-                Config.ClientId, Config.ClientSecret, code, new Uri("http://localhost:5000/callback")
+
+                Config.ClientId, Config.ClientSecret, code, new Uri("http://localhost:" + Config.CallbackPort + "/callback")
               )
             );
 

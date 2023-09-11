@@ -23,6 +23,7 @@ namespace NeosSpotifyStatus
         public static string ClientSecret { get; }
         public static bool Loaded { get; }
         public static int Port { get; }
+        public static int CallbackPort { get; }
 
         public static string RefreshToken
         {
@@ -49,6 +50,8 @@ namespace NeosSpotifyStatus
 
             ClientId = data["Spotify"]["ClientID"];
             ClientSecret = data["Spotify"]["ClientSecret"];
+            _ = int.TryParse(data["WebserverListen"]["CallbackPort"], out var port1);
+            CallbackPort = port1;
             Loaded = int.TryParse(data["WebSocketServer"]["Port"], out var port);
             Port = port;
 
