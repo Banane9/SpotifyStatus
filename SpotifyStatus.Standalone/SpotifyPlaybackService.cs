@@ -206,7 +206,14 @@ namespace SpotifyStatus
                 SpotifyTracker.UpdatePlaybackAsync();
 
             if (updateQueue)
-                SpotifyTracker.UpdateQueueAsync();
+            {
+                var profile = await SpotifyTracker.Spotify.UserProfile.Current();
+
+                if (profile.Product == "premium")
+                {
+                    SpotifyTracker.UpdateQueueAsync();
+                }
+            }
         }
 
         protected override void OnOpen()

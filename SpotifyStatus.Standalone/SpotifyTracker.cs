@@ -75,7 +75,12 @@ namespace SpotifyStatus
                 return;
             }
 
-            UpdateQueueAsync();
+            var profile = await Spotify.UserProfile.Current();
+
+            if (profile.Product == "premium")
+            {
+                UpdateQueueAsync();
+            }
 
             PlayingContextUpdated?.Invoke(currentPlayback);
 
