@@ -14,7 +14,7 @@ Make sure you have installed the [.NET 5.0 Runtime](https://dotnet.microsoft.com
 
 ## Resonite Setup
 To actually be able to use this, you will need to get the item from my public folder.
-1. Copy this link: ``neosrec:///U-Banane9/R-88a9ae63-4861-42e5-a378-bed7468e0e50``
+1. Copy this link: ``resrec:///U-Banane9/R-88a9ae63-4861-42e5-a378-bed7468e0e50``
 2. Paste it into Resonite by pressing Ctrl+V or by opening your Dash menu and pressing the "Paste content from clipboard" button.
 3. Grab the item that just spawned, open your context menu and save it. **(Note: You may need to return to the root of your own inventory to save the folder.)**
 4. Open your inventory and enter the folder.
