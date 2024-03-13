@@ -135,5 +135,10 @@ namespace SpotifyStatus
         /// Queued playables have been updated.
         /// </summary>
         QueueUpdated = 1 << 18,
+        
+        /// <summary>
+        /// Queued playables have been updated.
+        /// </summary>
+        Canvas = 1 << 19,
     }
 }
