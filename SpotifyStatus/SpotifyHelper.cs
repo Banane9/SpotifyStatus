@@ -18,52 +18,52 @@ namespace SpotifyStatus
 
         public static string GetCover(this IPlayableItem playableItem)
         {
-            return playableItem switch
-            {
-                FullTrack track => track.Album.Images[0].Url,
-                FullEpisode episode => episode.Images[0].Url,
-                _ => null
-            };
+            if (playableItem is FullTrack track)
+                return track.Album.Images.FirstOrDefault()?.Url;
+            else if (playableItem is FullEpisode episode)
+                return episode.Images.FirstOrDefault()?.Url;
+
+            return null;
         }
 
         public static IEnumerable<SpotifyResource> GetCreators(this IPlayableItem playableItem)
         {
-            return playableItem switch
-            {
-                FullTrack track => track.Artists.Select(artist => new SpotifyResource(artist.Name, artist.ExternalUrls["spotify"])).ToArray(),
-                FullEpisode episode => new[] { new SpotifyResource(episode.Show.Name, episode.Show.ExternalUrls["spotify"]) },
-                _ => Enumerable.Empty<SpotifyResource>()
-            };
+            if (playableItem is FullTrack track)
+                return track.Artists.Select(artist => new SpotifyResource(artist.Name, artist.ExternalUrls["spotify"])).ToArray();
+            else if (playableItem is FullEpisode episode)
+                return new[] { new SpotifyResource(episode.Show.Name, episode.Show.ExternalUrls["spotify"]) };
+
+            return Enumerable.Empty<SpotifyResource>();
         }
 
         public static int GetDuration(this IPlayableItem playableItem)
         {
-            return playableItem switch
-            {
-                FullTrack track => track.DurationMs,
-                FullEpisode episode => episode.DurationMs,
-                _ => 100,
-            };
+            if (playableItem is FullTrack track)
+                return track.DurationMs;
+            else if (playableItem is FullEpisode episode)
+                return episode.DurationMs;
+
+            return 100;
         }
 
         public static SpotifyResource GetGrouping(this IPlayableItem playableItem)
         {
-            return playableItem switch
-            {
-                FullTrack track => new SpotifyResource(track.Album.Name, track.Album.ExternalUrls["spotify"]),
-                FullEpisode episode => new SpotifyResource(episode.Show.Name, episode.Show.ExternalUrls["spotify"]),
-                _ => null
-            };
+            if (playableItem is FullTrack track)
+                return new SpotifyResource(track.Album.Name, track.Album.ExternalUrls["spotify"]);
+            else if (playableItem is FullEpisode episode)
+                return new SpotifyResource(episode.Show.Name, episode.Show.ExternalUrls["spotify"]);
+
+            return null;
         }
 
         public static SpotifyResource GetResource(this IPlayableItem playableItem)
         {
-            return playableItem switch
-            {
-                FullTrack track => new SpotifyResource(track.Name, track.ExternalUrls["spotify"]),
-                FullEpisode episode => new SpotifyResource(episode.Name, episode.ExternalUrls["spotify"]),
-                _ => null,
-            };
+            if (playableItem is FullTrack track)
+                return new SpotifyResource(track.Name, track.ExternalUrls["spotify"]);
+            else if (playableItem is FullEpisode episode)
+                return new SpotifyResource(episode.Name, episode.ExternalUrls["spotify"]);
+
+            return null;
         }
 
         public static PlayerSetRepeatRequest.State GetState(string name)
@@ -78,16 +78,7 @@ namespace SpotifyStatus
 
         public static int ToUpdateInt(this SpotifyInfo info)
         {
-            return info == SpotifyInfo.Clear ? 0 : ((int)Math.Log2((int)info) + 1);
-        }
-
-        public static async Task<string> GetSongCanvas(string currentSongId)
-        {
-            using (var client = new HttpClient())
-            {
-                var response = await client.GetAsync($"https://spotify-canvas-api-weld.vercel.app/spotify?id={currentSongId}");
-                return await response.Content.ReadAsStringAsync();
-            }
+            return info == SpotifyInfo.Clear ? 0 : ((int)Math.Log((int)info, 2) + 1);
         }
     }
 }

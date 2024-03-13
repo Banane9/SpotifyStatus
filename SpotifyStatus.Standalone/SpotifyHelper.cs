@@ -80,5 +80,14 @@ namespace SpotifyStatus
         {
             return info == SpotifyInfo.Clear ? 0 : ((int)Math.Log2((int)info) + 1);
         }
+
+        public static async Task<string> GetSongCanvas(string currentSongId)
+        {
+            using (var client = new HttpClient())
+            {
+                var response = await client.GetAsync($"https://spotify-canvas-api-weld.vercel.app/spotify?id={currentSongId}");
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
     }
 }

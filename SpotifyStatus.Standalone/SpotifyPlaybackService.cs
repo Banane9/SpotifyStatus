@@ -24,7 +24,7 @@ namespace SpotifyStatus
         {
             _contextChangeTrackers = new List<ChangeTracker>()
             {
-                new ChangeTracker(nC => HandleChangedResource(SpotifyInfo.Playable, nC.Item.GetResource()),
+                new ChangeTracker(nC => (HandleChangedResource(SpotifyInfo.Playable, nC.Item.GetResource());GetSongCanvas();),
                     (oC, nC) => !oC.Item.GetResource().Equals(nC.Item.GetResource())),
 
                 new ChangeTracker(nC => HandleChangedResources(SpotifyInfo.Creator, nC.Item.GetCreators()),
