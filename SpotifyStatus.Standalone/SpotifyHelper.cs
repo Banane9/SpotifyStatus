@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions; // Add this for Regex support
 using Newtonsoft.Json;
 using SpotifyAPI.Web;
 using SpotifyStatus.Standalone;
@@ -97,13 +98,13 @@ namespace SpotifyStatus
 
         public static async void SendCanvasAsync(this IPlayableItem playableItem, Action<SpotifyInfo, string> sendMessage)
         {
-            var id = playableItem.GetId();
-            if (string.IsNullOrEmpty(id))
+            var trackId = playableItem.GetId();
+            if (string.IsNullOrEmpty(trackId))
                 return;
 
             try
             {
-                var canvasUrl = await _httpClient.GetStringAsync($"https://spotify-canvas-api-weld.vercel.app/spotify?id=spotify:track:{id}");
+                string canvasUrl = await GetSpotifyTrackDownloadUrl(trackId);
 
                 if (string.IsNullOrWhiteSpace(canvasUrl))
                 {
@@ -120,6 +121,39 @@ namespace SpotifyStatus
                 Console.WriteLine(ex.ToString());
             }
         }
+
+        private static async Task<string> GetSpotifyTrackDownloadUrl(string trackId)
+        {
+            string url = $"https://www.canvasdownloader.com/canvas?link=https://open.spotify.com/track/{trackId}";
+
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode(); // Check for successful HTTP response
+
+                string htmlContent = await response.Content.ReadAsStringAsync();
+
+                // Use Regex to extract the download link from the HTML
+                string pattern = @"download-button' onclick=\""window\.open\('(.*?)', '_blank'\)\"";
+                Match match = Regex.Match(htmlContent, pattern);
+
+                if (match.Success)
+                {
+                    return match.Groups[1].Value; // Return the extracted download link
+                }
+                else
+                {
+                    Console.WriteLine("Download button not found in HTML.");
+                    return null; // Return null if the download button is not found
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching or parsing HTML: {ex.Message}");
+                return null; // Return null in case of any error
+            }
+        }
+
 
         public static async void SendLyricsAsync(this IPlayableItem playableItem, Action<SpotifyInfo, string> sendMessage)
         {
