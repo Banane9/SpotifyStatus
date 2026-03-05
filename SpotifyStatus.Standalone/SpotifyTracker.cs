@@ -19,9 +19,9 @@ namespace SpotifyStatus
         private static readonly OAuthClient oAuthClient = new OAuthClient(SpotifyClientConfig.CreateDefault());
         private static readonly ManualResetEventSlim spotifyClientAvailable = new ManualResetEventSlim(false);
         private static readonly Timer updateTimer = new Timer(UpdatePlaybackAsync);
-        private static readonly WebSocketServer wsServer = new WebSocketServer(IPAddress.Loopback, 1011, false);
+        private static readonly WebSocketServer wsServer = new WebSocketServer(IPAddress.Loopback, Config.Port, false);
         private static DateTime accessExpiry;
-        private static AbsoluteTimer.AbsoluteTimer authTimer;
+        private static Timer authTimer;
         private static SpotifyResource lastItem;
         public static bool IsPremium { get; private set; }
         public static CurrentlyPlayingContext LastPlayingContext { get; private set; }
@@ -149,7 +149,15 @@ namespace SpotifyStatus
                 Console.WriteLine($"Refreshing access at {refreshAt}");
 
                 authTimer?.Dispose();
-                authTimer = new AbsoluteTimer.AbsoluteTimer(refreshAt, handleAuthorization, null);
+                var delay = refreshAt - DateTime.Now;
+                if (delay > TimeSpan.Zero)
+                {
+                    authTimer = new Timer(_ => handleAuthorization(), null, delay, Timeout.InfiniteTimeSpan);
+                }
+                else
+                {
+                    handleAuthorization();
+                }
 
                 var profile = await Spotify.UserProfile.Current();
                 IsPremium = "premium".Equals(profile.Product, StringComparison.OrdinalIgnoreCase);

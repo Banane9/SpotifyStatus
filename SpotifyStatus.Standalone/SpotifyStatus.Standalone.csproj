@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AbsoluteTimer" Version="1.0.1" />
     <PackageReference Include="EmbedIO" Version="3.5.2" />
     <PackageReference Include="ini-parser" Version="3.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
